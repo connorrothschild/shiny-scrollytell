@@ -7,7 +7,7 @@ library(shticky)
 source("source_code_for_shiny.R")
 
 OFFSET <- "0"
-ANIMATION <- "slideInUp"
+# ANIMATION <- "slideInUp"
 
 ui <- fluidPage(
   tags$head(
@@ -20,6 +20,7 @@ ui <- fluidPage(
       id = "stick",
       style = "position:relative;width:100%;height:600px;",
       fluidRow(
+        # column(width = 1),
         column(width = 12,
                ggvisOutput("plot")
                )
@@ -27,10 +28,29 @@ ui <- fluidPage(
     ),
     longdiv(
       h1("Automation and Its Impact on Jobs", class = "title"),
+      # br(),
       h1(
         class = "subtitle",
         "How do different occupations differ in their susceptibility to automation?"
       )
+      # br(),
+      # p(
+      #   # style = "text-align:center;",
+      #   "How do different occupations differ in their susceptibility to automation?",
+      #   tags$a(
+      #     class = "sg",
+      #     tags$i(class = "fas fa-external-link-alt"),
+      #     target = "_blank",
+      #     href = "https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-01-01"
+      #   )
+      # ),
+      # br(),
+      # br(),
+      # br()
+      # p(
+      #   style = "word-wrap:break-word;white-space:normal;",
+      #   tags$i(class = "fas fa-chevron-down fa-3x")
+      # )
     ),
   longdiv(
     div(
@@ -89,6 +109,9 @@ ui <- fluidPage(
     id = "m10",
     h1("Thank you!", class = "title"),
     br(),
+    # p(
+    #   "Please visit my blog, my GitHub, or my Twitter.", class = "subtitle"
+    #   ),
     br(),
     div(
     tags$a("Blog",
@@ -112,24 +135,15 @@ ui <- fluidPage(
                 <br>
                 <span style='font-size:14px'>
                 Employment and education data comes from the
-                <a href='https://www.bls.gov/emp/documentation/education-training-system.htm' target='_blank'>Bureau of Labor Statistics</a>. 
-                <br>
-                Employment and income data also comes from the <a href='https://www.bls.gov/oes/current/oes_nat.htm#11-0000' target='_blank'>BLS</a>.
-                <br>
-                Data on occupation and the risk of automation comes from <a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Frey and Osborne (2013)</a>. 
-                <br>
+                <a href='https://www.nba.com' target='_blank'>Bureau of Labor Statistics</a>. 
+                Employment and income data also comes from the <a href='https://www.basketball-reference.com' target='_blank'>BLS</a>.
+                Data on occupation and the risk of automation comes from <a href='https://www.archive.fiba.com' target='_blank'>Frey and Osborne (2013)</a>. 
                 <br>
                 Education is coded as typical education, meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
                 If 51% of accountants hold a bachelor's degree, their typical education will be coded as such.
-                Summary statistics for each level of education are calculated via the weighted mean of each occupation given its number of workers.
-                <br>
-                <br>
-                This post may have technical errors. This post was an exercise to learn R and is not a comprehensive nor verifiably accurate account of automation's impact on jobs. 
-                Please refrain from citing this as anything other than an example of R usage in a scrollytelling context.
                 <br>
                 For more information on the technical details of this analysis, please see the <a href='https://connorrothschild.github.io/r/automation/' target='_blank'>accompanying blog post</a>. 
-                <br>
-                <br>
+
                 The R packages powering this site include 
                 <a href='https://www.tidyverse.org/' target='_blank'>tidyverse</a>,
                 <a href='http://shiny.rstudio.com/' target='_blank'>shiny</a>,

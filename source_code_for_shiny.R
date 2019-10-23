@@ -85,6 +85,24 @@ data <- data %>%
 data <- data %>% 
   mutate(probability = probability*100)
 
+tot_emp <- data %>% 
+  group_by(typicaled) %>% 
+  summarise(sum_tot_emp = sum(TOT_EMP)) 
+
+data <- merge(data, tot_emp)
+
+# add weights for education-level probability
+
+data <- data %>% 
+  mutate(weight = TOT_EMP/sum_tot_emp) 
+
+mean_prob <- data %>% 
+  group_by(typicaled) %>%
+  summarise(mean_prob = weighted.mean(probability, weight))
+# %>%  summarise(mean_income = weighted.mean(A_MEDIAN, weight))
+
+data <- merge(data, mean_prob)
+
 ## FUNCTIONS
 
 add_data <- function(add){
@@ -92,6 +110,7 @@ add_data <- function(add){
     vis <-  reactive({
       
       data <- data %>% 
+        filter(typicaled != "Some college, no degree") %>%
         filter(if (add != 8) add == reveal else reveal %in% c(1:8)) %>% 
         ggvis(~A_MEDIAN, ~probability, opacity := 0.7, key := ~occupation) %>% 
         scale_numeric('size',domain = c(100000,500000),range=c(100,500)) %>%
@@ -114,7 +133,8 @@ add_data <- function(add){
         set_options(duration = 0, width = "auto", height = "auto", resizable = FALSE)
       
     })
-    vis %>% bind_shiny("plot")
+      
+    vis %>% bind_shiny("vis")
    
 }  
 
@@ -134,36 +154,36 @@ render_text <- function(wp){
   
 }
 
-text1 <- paste0("Workers with no formal education credential have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==1])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==1])), "% chance of job automation.",
+text1 <- paste0("Workers with no formal education credential have a median income of $25,636",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==1])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==1])), " workers with no formal education credential.")
 
-text2 <- paste0("Workers with a high school diploma have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==2])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==2])), "% chance of job automation.",
+text2 <- paste0("Workers with a high school diploma have a median income of $35,256",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==2])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==2])), " workers with only a high school diploma.")
 
-text3 <- paste0("Workers with a postsecondary nondegree award (e.g. actors) have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==3])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==3])), "% chance of job automation.",
+text3 <- paste0("Workers with a postsecondary nondegree award (e.g. actors) have a median income of ", scales::dollar(median(data$A_MEDIAN[data$reveal==3])),
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==3])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==3])), " workers with a postsecondary nondegree award.")
 
-text4 <- paste0("Workers with an associate's degree have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==4])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==4])), "% chance of job automation.",
+text4 <- paste0("Workers with an associate's degree have a median income of $41,496",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==4])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==4])), " workers with an associate's degree.")
 
-text5 <- paste0("Workers with a bachelor's degree have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==5])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==5])), "% chance of job automation.",
+text5 <- paste0("Workers with a bachelor's degree have a median income of $59,124",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==5])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==5])), " workers with a bachelor's degree.")
 
-text6 <- paste0("Workers with a master's degree have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==6])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==6])), "% chance of job automation.",
+text6 <- paste0("Workers with a master's degree have a median income of $69,732",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==6])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==6])), " workers with a master's degree.")
 
-text7 <- paste0("Workers with a doctoral degree have a median income of ", scales::dollar(mean(data$A_MEDIAN[data$reveal==7])),
-                " and, on average, a ", round(mean(data$probability[data$reveal==7])), "% chance of job automation.",
+text7 <- paste0("Workers with a doctoral degree have a median income of $84,396",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==7])), "% chance of job automation.",
                 " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==7])), " workers with a doctoral degree.")
 
-text8 <- paste0("All things considered, the median income of an average US worker is ", scales::dollar(mean(data$A_MEDIAN)),
-                " and, on average, their job has a ", round(mean(data$probability)), "% chance of being automated.")
+text8 <- paste0("All things considered, the nominal median income of an average US worker is $31,786",
+                " and, on average, their job has a ", round(median(data$mean_prob)), "% chance of being automated.")
 
 text <- function(wp){
   p(
