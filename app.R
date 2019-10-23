@@ -109,12 +109,12 @@ ui <- fluidPage(
     id = "m10",
     h1("Thank you!", class = "title"),
     br(),
-    p(
-      "Please visit my blog, my GitHub, or my Twitter.", class = "subtitle"
-      ),
+    # p(
+    #   "Please visit my blog, my GitHub, or my Twitter.", class = "subtitle"
+    #   ),
     br(),
     div(
-    tags$a("Personal Website",
+    tags$a("Blog",
       href = "https://connorrothschild.github.io", class = "subtitle"
     ),
     br(),
@@ -125,6 +125,22 @@ ui <- fluidPage(
     tags$a("GitHub",
       href = "https://github.com/connorrothschild/", class = "subtitle"
     ), style = "text-align:center;"
+    ),
+    br(),
+    br(),
+    br(),
+    p(
+      "Technical notes:"
+    ),
+    p("Employment, education, and income data are all from the Bureau of Labor Statistics.
+      Risk of automation per occupation is from Frey and Osborne (2013)."
+    ),
+    p(
+      '"Education" is coded as "typical education", meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
+      If 51% of accountants hold a bachelors degree, their "typical education" will be coded as such.'
+    ),
+    p(
+      "For more information on the technical details of this analysis, please see the accompanying blog post (https://connorrothschild.github.io/r/automation/)." 
     )
     )
 )
