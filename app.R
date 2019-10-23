@@ -127,22 +127,35 @@ ui <- fluidPage(
     ), style = "text-align:center;"
     ),
     br(),
-    br(),
-    br(),
-    p(
-      "Technical notes:"
+  fluidRow(
+    column(2),
+    column(8,
+           HTML("<p>
+                <span style='font-size:18px'><i>Technical Notes</i></span><br>
+                <br>
+                <span style='font-size:14px'>
+                Employment and education data comes from the
+                <a href='https://www.nba.com' target='_blank'>Bureau of Labor Statistics</a>. 
+                Employment and income data also comes from the <a href='https://www.basketball-reference.com' target='_blank'>BLS</a>.
+                Data on occupation and the risk of automation comes from <a href='https://www.archive.fiba.com' target='_blank'>Frey and Osborne (2013)</a>. 
+                <br>
+                Education is coded as typical education, meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
+                If 51% of accountants hold a bachelor's degree, their typical education will be coded as such.
+                <br>
+                For more information on the technical details of this analysis, please see the <a href='https://connorrothschild.github.io/r/automation/' target='_blank'>accompanying blog post</a>. 
+
+                The R packages powering this site include 
+                <a href='https://www.tidyverse.org/' target='_blank'>tidyverse</a>,
+                <a href='http://shiny.rstudio.com/' target='_blank'>shiny</a>,
+                <a href='https://ggvis.rstudio.com' target='_blank'>ggvis</a>,
+                <a href='https://github.com/RinteRface/waypointer' target='_blank'>waypointer</a>, and 
+                <a href='https://github.com/JohnCoene/shticky' target='_blank'>shticky</a>.
+                </span>
+                </p>")
     ),
-    p("Employment, education, and income data are all from the Bureau of Labor Statistics.
-      Risk of automation per occupation is from Frey and Osborne (2013)."
-    ),
-    p(
-      '"Education" is coded as "typical education", meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
-      If 51% of accountants hold a bachelors degree, their "typical education" will be coded as such.'
-    ),
-    p(
-      "For more information on the technical details of this analysis, please see the accompanying blog post (https://connorrothschild.github.io/r/automation/)." 
-    )
-    )
+    column(2)
+  )
+  )
 )
 
 server <- function(input, output, session) {
