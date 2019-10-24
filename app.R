@@ -4,14 +4,14 @@ library(ggvis)
 library(waypointer)
 library(shticky)
 
-source("source_code_for_shiny.R")
+source("initial_source_code_for_shiny.R")
 
 OFFSET <- "0"
 ANIMATION <- "slideInUp"
 
 ui <- fluidPage(
   tags$head(
-    includeCSS("www/style.css")
+    includeCSS("www/initial_style.css")
   ),
   use_shticky(),
   use_waypointer(),

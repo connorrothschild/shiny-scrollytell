@@ -8,7 +8,7 @@ library(tidyverse)
 library(knitr)
 
 options(scipen=999)
-# theme_set(theme_minimal())
+theme_set(theme_minimal())
 
 education <- read_excel("education.xlsx", skip=1)
 salary <- read_excel("national_M2017_dl.xlsx")
@@ -149,24 +149,18 @@ longdiv <- function(...){
 render_text <- function(wp){
   
   div(
-    text(wp), class = "text"
+    text(wp), class = "subtitle"
   )
   
 }
 
-text0 <- HTML("<H1 style='size:18px';> How do jobs differ in their susceptibility to automation? </H1>
-              <br> <p> Introductory paragraph.
-              <br> Sentence two.
-              <br><br> Sentence three.<p>")
+text1 <- paste0("Workers with no formal education credential have a median income of $25,636",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==1])), "% chance of job automation.",
+                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==1])), " workers with no formal education credential.")
 
-text1 <- HTML("<H1 style='size:18px';> No formal education credential </H1>
-              <br> <p> Workers with <font color='#A00042'>no formal education credential</font> have a median income of $25,636.
-              <br> On average, those occupations have a <b>90% chance</b> of job automation.
-              <br><br> There are 23,765,700 workers with <font color='#A00042'>no formal education credential</font>.<p>")
-
-text2 <- HTML("<p>Workers with <font color='#F56C42'>a high school diploma</font> have a median income of $25,636.
-              <br> On average, those occupations have a <b>60% chance</b> of job automation.
-              <br><br> There are 33,129,910 workers with <font color='#F56C42'>no formal education credential</font>.<p>")
+text2 <- paste0("Workers with a high school diploma have a median income of $35,256",
+                " and, on average, a ", round(median(data$mean_prob[data$reveal==2])), "% chance of job automation.",
+                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==2])), " workers with only a high school diploma.")
 
 text3 <- paste0("Workers with a postsecondary nondegree award (e.g. actors) have a median income of ", scales::dollar(median(data$A_MEDIAN[data$reveal==3])),
                 " and, on average, a ", round(median(data$mean_prob[data$reveal==3])), "% chance of job automation.",
