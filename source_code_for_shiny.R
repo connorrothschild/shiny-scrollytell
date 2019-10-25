@@ -7,8 +7,9 @@ library(readxl)
 library(tidyverse)
 library(knitr)
 
+### ALL DATA CLEANING
+
 options(scipen=999)
-# theme_set(theme_minimal())
 
 education <- read_excel("education.xlsx", skip=1)
 salary <- read_excel("national_M2017_dl.xlsx")
@@ -103,40 +104,7 @@ mean_prob <- data %>%
 
 data <- merge(data, mean_prob)
 
-## FUNCTIONS
-
-add_data <- function(add){
-
-    vis <-  reactive({
-      
-      data <- data %>% 
-        filter(typicaled != "Some college, no degree") %>%
-        filter(if (add != 8) add == reveal else reveal %in% c(1:8)) %>% 
-        ggvis(~A_MEDIAN, ~probability, opacity := 0.7, key := ~occupation) %>% 
-        scale_numeric('size',domain = c(100000,500000),range=c(100,500)) %>%
-        layer_points(fill = ~typicaled, size = ~TOT_EMP) %>% 
-        add_tooltip(function(data) glue::glue('Occupation: {data$occupation}',
-                                              'Number of Workers: {scales::comma(data$TOT_EMP)}',
-                                              'Probability of Automation: {data$probability}%',
-                                              'Income: {scales::dollar(data$A_MEDIAN)}',
-                                              .sep = "<br />")) %>% 
-        add_axis("x", title = "Median Income", grid = FALSE) %>%
-        add_axis("y", title = "Probability of Automation", title_offset = 50, grid = FALSE) %>% 
-        add_legend("fill", title = "Education", properties = legend_props(legend = list(y = 200))) %>%
-        add_legend("size", title = "Number of Workers", properties = legend_props(legend = list(y = 50))) %>%
-        scale_numeric("x", domain = c(25000, 200000), nice = FALSE) %>%
-        scale_numeric("y", domain = c(0, 100), nice = FALSE) %>% 
-        scale_nominal("fill", 
-                      domain = c('No formal educational credential','High school diploma or equivalent', "Postsecondary nondegree award",
-                                 "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral or professional degree"), 
-                      range = c('#A00042', '#F56C42', '#AADDA3', '#3487BD', '#5E4FA2', '#C71C7E', "#1A1A1A")) %>% 
-        set_options(duration = 0, width = "auto", height = "auto", resizable = FALSE)
-      
-    })
-      
-    vis %>% bind_shiny("vis")
-   
-}  
+### FUNCTIONS & TEXT
 
 longdiv <- function(...){
   div(
@@ -154,11 +122,18 @@ render_text <- function(num){
   
 }
 
-text0 <- HTML("<span style='font-size:20px'> How do jobs differ in their susceptibility to automation? </span>
+text0 <- HTML("<span style='font-size:20px'> How do different jobs differ in their susceptibility to automation? </span>
               <br><br> 
-              <p> Introductory paragraph.
-              <br> Sentence two.
-              <br><br> Sentence three.<p>")
+              <p> The topic of job automation has rapidly entered the national discourse. 
+              Although it was once a topic reserved for policy wonks, college students, and Reddit Libertarians, it's now a serious talking point&mdash;from 
+              the multitude of news articles documenting the risk of automation, to <a href='https://www.forbes.com/sites/quora/2019/09/27/automation-will-dramatically-change-the-workforce-andrew-yang-has-a-plan-to-bridge-the-gap/#52f0e5df204b' target='_blank'>Andrew Yang's presidential proposal</a> to solve job automation via a universal basic income. 
+              <br> Experts have put forth a wide range of estimates for the true impact of job automization. No matter how severe it is, few argue that automation will have <i>no impact</i>.
+              Most agree that automation will impact the way Americans work, and that it may put many workers out of a job (and many argue it already has).
+              <br><br> But will different workers experience the impacts of automation in different ways? In this post, I combine data from two Oxford researchers, <a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Carl Benedikt Frey and Michael A. Osborne</a>,
+              with employment statistics from the Bureau of Labor Statistics to answer the question: 
+              <br><br>
+              <span style='font-size:18px'> How do different jobs differ in their susceptibility to automation? </span>
+              <br> Specifically, how does a worker's <b>level of education</b> and <b>current income</b> influence their risk of job loss to the rise of the robots? <p>")
 
 text1 <- HTML("<H2> No education credentials </H2>
               <br> <p> Workers with <font color='#A00042'>no formal education credential</font> have a median income of $25,636.
@@ -186,7 +161,7 @@ text5 <- HTML("<H2> Bachelor's degrees </H2>
               <br><br> There are 18,399,270 workers with a <font color='#C71C7E'>bachelor's degree</font>.<p>")
 
 text6 <- HTML("<H2> Master's degrees </H2>
-              <br> <p>Workers with <font color='#5E4FA2'>master's degree</font> have a median income of $69,732.
+              <br> <p>Workers with <font color='#5E4FA2'>master's degrees</font> have a median income of $69,732.
               <br> On average, those occupations have a <b>10% chance</b> of job automation.
               <br><br> There are 1,281,710 workers with a <font color='#5E4FA2'>master's degree</font>.<p>")
 
@@ -197,6 +172,7 @@ text7 <- HTML("<H2> Doctoral degrees </H2>
 
 text8 <- HTML("<H2> In Sum </H2>
               <br> <p>All things considered, the nominal median income of an average US worker is <b>$31,786</b>.
+              <br>
               <br> 47% of jobs are expected to face a high risk of automatization in the near future.<sup>1</sup><p>
               <br><br><br>
               <span style='font-size:11px'><sup>1</sup><a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Frey and Osborne (2013)</a>
@@ -218,6 +194,10 @@ text <- function(num){
   )
 }
 
+
+### ALL PLOT OBJECTS
+
+# helpers for all plots:
 cols <- c('No formal educational credential' = '#A00042','High school diploma or equivalent' = '#F56C42',
           "Postsecondary nondegree award" = '#008640', "Associate's degree" = '#3487BD', 
           "Bachelor's degree" = '#C71C7E', "Master's degree" = '#5E4FA2',
@@ -225,21 +205,76 @@ cols <- c('No formal educational credential' = '#A00042','High school diploma or
 
 legend_ord <- levels(with(data, reorder(typicaled, reveal)))
 
-introPlot <- data %>% 
+## Intro plot
+# Intro static ggplot
+introggPlot <- data %>% 
   filter(typicaled != "Some college, no degree") %>%
   ggplot() +
   geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
-                         alpha=1/5, col=typicaled))+
+                         alpha= 1/7, col=typicaled,
+                         text = glue::glue('<b>Occupation</b>: {occupation}
+                                            <b>Probability of Automation</b>: {probability}%
+                                            <b>Median Income</b>: ${A_MEDIAN}'))) +
   scale_size(range = c(1, 20), guide = 'none') +
   xlab("\nMedian Income") +
   ylab("Probability of Automation") +
-  ggtitle("Likelihood of Job Automation vs Median Income") +
-  labs(size=element_blank(), col=element_blank()) +
-  labs(alpha=NULL) +
-  guides(alpha=FALSE) +
+  # ggtitle("Likelihood of Job Automation vs Median Income") +
+  labs(size= "", col= "", alpha = "") + 
   scale_color_manual(values = cols, breaks = legend_ord) +
   scale_x_continuous(labels=scales::dollar_format(prefix="$"), limits = c(25000,200000)) +
   scale_y_continuous(labels=scales::number_format(suffix="%"), limits = c(0,100)) +
-  # theme(legend.position = "top", legend.direction = "horizontal", 
-  #       legend.text = element_text(colour="black", size = 12)) +
-  cr::drop_axis(axis = "y")
+  # theme(legend.position = "top", legend.direction = "horizontal") +
+  # legend.text = element_text(colour = ifelse(add == reveal, "black", "grey"))) +
+  # legend.text = element_text(colour="black", size = ifelse(add == reveal, 20, 12))) +
+  # cr::drop_axis(axis = "y")
+  theme(axis.line.x = ggplot2::element_line(colour = NULL, 
+                                            size = NULL, linetype = NULL, lineend = NULL), 
+        axis.line.y = ggplot2::element_blank(),
+        panel.grid.major.x = element_blank())
+
+# Convert into ggplotly
+introPlot <- ggplotly(introggPlot, tooltip = 'text') %>%
+  layout(
+    title = element_blank(),
+    legend = list(x = 0.65, y = 0.925),
+    font = list(family = 'Lato'),
+    margin=list(t=50),
+    hoverlabel = list(bgcolor = 'whitesmoke', color = 'DarkGray')) %>%
+  config(displaylogo = F, showSendToCloud = F, displayModeBar = F)
+
+## Body plot
+
+
+
+# add_data <- function(add){
+#   
+#   vis <-  reactive({
+#     
+#     data <- data %>% 
+#       filter(typicaled != "Some college, no degree") %>%
+#       filter(if (add != 8) add == reveal else reveal %in% c(1:8)) %>% 
+#       ggvis(~A_MEDIAN, ~probability, opacity := 0.7, key := ~occupation) %>% 
+#       scale_numeric('size',domain = c(100000,500000),range=c(100,500)) %>%
+#       layer_points(fill = ~typicaled, size = ~TOT_EMP) %>% 
+#       add_tooltip(function(data) glue::glue('Occupation: {data$occupation}',
+#                                             'Number of Workers: {scales::comma(data$TOT_EMP)}',
+#                                             'Probability of Automation: {data$probability}%',
+#                                             'Income: {scales::dollar(data$A_MEDIAN)}',
+#                                             .sep = "<br />")) %>% 
+#       add_axis("x", title = "Median Income", grid = FALSE) %>%
+#       add_axis("y", title = "Probability of Automation", title_offset = 50, grid = FALSE) %>% 
+#       add_legend("fill", title = "Education", properties = legend_props(legend = list(y = 200))) %>%
+#       add_legend("size", title = "Number of Workers", properties = legend_props(legend = list(y = 50))) %>%
+#       scale_numeric("x", domain = c(25000, 200000), nice = FALSE) %>%
+#       scale_numeric("y", domain = c(0, 100), nice = FALSE) %>% 
+#       scale_nominal("fill", 
+#                     domain = c('No formal educational credential','High school diploma or equivalent', "Postsecondary nondegree award",
+#                                "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral or professional degree"), 
+#                     range = c('#A00042', '#F56C42', '#AADDA3', '#3487BD', '#5E4FA2', '#C71C7E', "#1A1A1A")) %>% 
+#       set_options(duration = 0, width = "auto", height = "auto", resizable = FALSE)
+#     
+#   })
+#   
+#   vis %>% bind_shiny("vis")
+#   
+# }  

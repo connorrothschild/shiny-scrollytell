@@ -2,7 +2,12 @@
 
 body {
   color: #3a3a3a;
-    font-family: 'Lato', sans-serif;;
+    font-family: 'Lato', sans-serif;
+}
+
+hr {
+  border-top: 1px 
+  solid #000000
 }
 
 /* #bg {

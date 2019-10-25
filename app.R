@@ -4,17 +4,16 @@ library(shinyjs)
 library(ggvis)
 library(waypointer)
 library(shticky)
+library(plotly)
 
-cr::set_cr_theme()
+# cr::set_cr_theme(font="lato")
+theme_set(theme_minimal())
 
 source("source_code_for_shiny.R")
 
-# Define UI
-
 ui <- fluidPage(
   
-  # Code to suppress warning messages while data is loading on-screen 
-  # reference (https://groups.google.com/forum/#!topic/shiny-discuss/FyMGa2R_Mgs)
+  # suppress warning messages while data is loading on-screen 
   tags$style(type="text/css",
              ".shiny-output-error { visibility: hidden; }",
              ".shiny-output-error:before { visibility: hidden; }"),
@@ -22,35 +21,33 @@ ui <- fluidPage(
     includeCSS("www/style.css")
   ),
   
-  # Article title
+  # article title & name
   fluidRow(HTML("<center>
                 <h1>Automation and Its Impact on Jobs</h1>
-                <p style='size:18px';> by <a href='https://connorrothschild.github.io/' target='_blank'>Connor Rothschild</a></p>
+                <p style='font-size:26px'> by <a href='https://connorrothschild.github.io/' target='_blank'>Connor Rothschild</a></p>
                 </center>")
   ),
+  
   br(),
   
-  # plot object for intro
   fluidRow(
     column(1),
+    
     column(10,
-           # Introduction
+           # intro text
            fluidRow(id='text',
-                    column(1),
-                    column(10, 
+                    column(2),
+                    column(8, 
                            br(),
-                           text0,
-                           br(),
-                           # ggvisOutput("interactivePlot"),
-                           plotOutput("introPlot", height = '600px')
-                    ),
-                    column(1)
+                           text0),
+                    column(2)),
+           # plot object for intro
+           plotlyOutput("introPlot", height = '400px')
            ),
-           
-           br(), 
-           br()
-           )
-    ),
+    
+    column(1),
+    
+           ),
   
   # scrollytelling plot
   scrolly_container("scr"
@@ -59,7 +56,7 @@ ui <- fluidPage(
                                      textOutput("section"),
                                      br(),
                                      HTML('<center>'),
-                                     plotOutput("plot", height = '600px'),
+                                     plotlyOutput("plot", height = '600px'),
                                      HTML('</center>')
                                      
                     )
@@ -86,11 +83,17 @@ ui <- fluidPage(
   div(fluidRow(id = 'text',
                column(2),
                column(8, 
-                      br(),
-                      HTML("<p><span style='font-size:30px'><b>The tournament</b></span>. As expected, once the men's Olympic basketball competition began, there was only one team that could leave Barcelona with the gold medal.  The United States cruised through all eight of its contests. In fact, during several games, it appeared as though the opposing team was just happy to be on the same floor as the NBA players.<br><br>
-                                
-                                Team USA averaged 117 points per game and held opponents to a measly 73 points per game over the two-week stretch.  Charles Barkley (18 PPG) and Michael Jordan (14.9 PPG) led the way in scoring.<br><br>
-                                Below is a look at player contributions in each of their eight victories.</p>"),
+                      HTML("<p><span style='font-size:24px'><b>The Risk of Automation</b></span>
+                        <br>
+                            <span style='font-size:18px'>Using the dataset I’ve used in this project, researchers Carl Frey and Michael Osborne predicted that 47% of jobs are at risk of automation over the next couple decades.
+                        <br>
+                            <br>The visuals above suggest that the ills of automation may not be evenly distributed across jobs.
+                            Less educated workers are more likely to face job loss as a product of automation. Those with high school diplomas or less find themself concentrated near the top of the y-axis, while those with bachelor’s degrees or higher face a lower risk of automation.
+                        <br>
+                            <br>A job’s salary is also predictive of automation probability. As the median income of a profession increases, the likelihood of automation displacing its workers decreases.
+                            This could suggest that automation will increasingly bifurcate the already divided labor market, making those at the top wealthier at the expense of the worse-off.
+                        <br>
+                            <br>Automation’s impact on work necessitates a policy response. The fact that automation will have different effects on different industries and different workers is a reminder that this public policy will have to be strategic and thoughtful.</span></p>"),
                       br()
                ),
                column(2)
@@ -99,32 +102,13 @@ ui <- fluidPage(
   br(),
   br(),
   br(),
-  
-  fluidRow(id = 'text',
-           column(2),
-           column(8, 
-                  br(),
-                  HTML("<p><span style='font-size:30px'><b>The impact</b></span>. The Dream Team's gold medal finish at the 1992 Olympics avenged a third place finish in 1988 and put the USA back on top of the basketball world - by a large margin. NBA popularity skyrocketed around the globe, thanks in part to the larger-than-life personalities of superstars like Michael Jordan, Magic Johnson, and Charles Barkley.<br><br>
-                                    
-                                    Team USA's decisive victory sent a message to the rest of the world that in order to compete for a championship on the global stage, huge improvements in skill and player development was essential. The world responded.  By 2004, international teams and players had elevated their games so much so that team USA settled for the bronze medal that year.<br><br>
-                                    
-                                    Since the 1992 games, numerous international players (such as Dirk Nowitzki, Manu Ginobili, Tony Parker, Pau and Marc Gasol) have come to the NBA, won championships, and found great success. While team USA is still a major favorite to stay on top, the Dream Team's influence on the international competition has ensured that this will be no easy task.<br><br>
-                                    
-                                    The game of basketball is better for it. </p>"),
-                  br()
-           ),
-           column(2)
-  ),
-  br(),
-  br(),
   hr(),
-  br(),
   
   fluidRow(
-    column(2),
-    column(8,
+    column(1),
+    column(10,
            HTML("<p>
-                <span style='font-size:18px'><i><u>Technical Notes</u></i></span><br>
+                <span style='font-size:18px'><i>Technical Notes</i></span><br>
                 <br>
                 <span style='font-size:12px'>
                 Employment and education data comes from the
@@ -155,7 +139,7 @@ ui <- fluidPage(
                 </span>
                 </p>")
     ),
-    column(2)
+    column(1)
   ),
   br(),
   br(),
@@ -166,37 +150,45 @@ column(1)
 # Define server logic
 server <- function(input, output, session) {
   
-  output$plot <- renderPlot({
+  output$plot <- renderPlotly({
     
     add <- input$scr
     
-    legend_ord <- levels(with(data, reorder(typicaled, reveal)))
-    
-    data %>% 
+    plot <- data %>% 
       filter(typicaled != "Some college, no degree") %>%
       filter(if (add != 8) add >= reveal else reveal %in% c(1:8)) %>%
       ggplot() +
       geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
-                             alpha=ifelse(add == reveal, 1/5, 1/10), col=typicaled))+
-      scale_size(range = c(1, 20), guide = 'none') +
+                             alpha=ifelse(add == reveal, 1/5, 1/10), col=typicaled,
+                             text = glue::glue('<b>Occupation</b>: {occupation}
+                                                <b>Probability of Automation</b>: {probability}%
+                                                <b>Median Income</b>: ${A_MEDIAN}
+                                                <b>Number of Workers</b>: {TOT_EMP}'))) +
+      scale_size(range = c(1, 20)) +
       xlab("\nMedian Income") +
       ylab("Probability of Automation") +
-      # ggtitle("Likelihood of Job Automation vs Median Income") +
-      labs(size=element_blank(), col=element_blank()) +
-      labs(alpha=NULL) +
-      guides(alpha=FALSE) +
+      labs(size= "", col= "", alpha = "") +
       scale_color_manual(values = cols, breaks = legend_ord) +
       scale_x_continuous(labels=scales::dollar_format(prefix="$"), limits = c(25000,200000)) +
       scale_y_continuous(labels=scales::number_format(suffix="%"), limits = c(0,100)) +
-      theme(legend.position = "top", legend.direction = "horizontal") +
-            # legend.text = element_text(colour = ifelse(add == reveal, "black", "grey"))) +
-            # legend.text = element_text(colour="black", size = ifelse(add == reveal, 20, 12))) +
-      cr::drop_axis(axis = "y")
+      # cr::drop_axis(axis = "y") +
+      theme(axis.line.x = ggplot2::element_line(colour = NULL, 
+                                                size = NULL, linetype = NULL, lineend = NULL), 
+            axis.line.y = ggplot2::element_blank(),
+            panel.grid.major.x = element_blank())
+    
+    ggplotly(plot, tooltip = 'text') %>%
+    layout(
+      title = list(element_blank()),
+      legend = list(x = 0.65, y = 0.925),
+      font = list(family = 'Lato'),
+      margin=list(t=50),
+      hoverlabel = list(bgcolor = 'whitesmoke', color = 'DarkGray')) %>%
+    config(displaylogo = F, showSendToCloud = F, displayModeBar = F)
     
   })
     
-  # output$interactivePlot <- vis %>% bind_shiny("vis")
-  output$introPlot <- renderPlot({introPlot})
+  output$introPlot <- renderPlotly({introPlot})
   output$scr <- renderScrollytell({scrollytell()})
   renderText(paste0("Section: ", input$scr))
   observe({cat("section:", input$scr, "\n")})
