@@ -146,54 +146,66 @@ longdiv <- function(...){
   )
 }
 
-render_text <- function(wp){
+render_text <- function(num){
   
   div(
-    text(wp), class = "text"
+    text(num), class = "text"
   )
   
 }
 
-text0 <- HTML("<H1 style='size:18px';> How do jobs differ in their susceptibility to automation? </H1>
-              <br> <p> Introductory paragraph.
+text0 <- HTML("<span style='font-size:20px'> How do jobs differ in their susceptibility to automation? </span>
+              <br><br> 
+              <p> Introductory paragraph.
               <br> Sentence two.
               <br><br> Sentence three.<p>")
 
-text1 <- HTML("<H1 style='size:18px';> No formal education credential </H1>
+text1 <- HTML("<H2> No education credentials </H2>
               <br> <p> Workers with <font color='#A00042'>no formal education credential</font> have a median income of $25,636.
               <br> On average, those occupations have a <b>90% chance</b> of job automation.
               <br><br> There are 23,765,700 workers with <font color='#A00042'>no formal education credential</font>.<p>")
 
-text2 <- HTML("<p>Workers with <font color='#F56C42'>a high school diploma</font> have a median income of $25,636.
+text2 <- HTML("<H2> High school diplomas </H2>
+              <br> <p>Workers with <font color='#F56C42'>high school diplomas</font> have a median income of $25,636.
               <br> On average, those occupations have a <b>60% chance</b> of job automation.
-              <br><br> There are 33,129,910 workers with <font color='#F56C42'>no formal education credential</font>.<p>")
+              <br><br> There are 33,129,910 workers with a <font color='#F56C42'>high school diploma</font>.<p>")
 
-text3 <- paste0("Workers with a postsecondary nondegree award (e.g. actors) have a median income of ", scales::dollar(median(data$A_MEDIAN[data$reveal==3])),
-                " and, on average, a ", round(median(data$mean_prob[data$reveal==3])), "% chance of job automation.",
-                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==3])), " workers with a postsecondary nondegree award.")
+text3 <- HTML("<H2> Postsecondary nondegree awards </H2>
+              <br> <p>Workers with <font color='#008640'>postsecondary nondegree awards</font> (e.g. actors) have a median income of $39,990.
+              <br> On average, those occupations have a <b>52% chance</b> of job automation.
+              <br><br> There are 5,904,150 workers with a <font color='#008640'>postsecondary nondegree award</font>.<p>")
 
-text4 <- paste0("Workers with an associate's degree have a median income of $41,496",
-                " and, on average, a ", round(median(data$mean_prob[data$reveal==4])), "% chance of job automation.",
-                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==4])), " workers with an associate's degree.")
+text4 <- HTML("<H2> Associate's degrees </H2>
+              <br> <p>Workers with <font color='#3487BD'>associate's degrees</font> have a median income of $41,496.
+              <br> On average, those occupations have a <b>50% chance</b> of job automation.
+              <br><br> There are 1,869,840 workers with an <font color='#3487BD'>associate's degree</font>.<p>")
 
-text5 <- paste0("Workers with a bachelor's degree have a median income of $59,124",
-                " and, on average, a ", round(median(data$mean_prob[data$reveal==5])), "% chance of job automation.",
-                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==5])), " workers with a bachelor's degree.")
+text5 <- HTML("<H2> Bachelor's degrees </H2>
+              <br> <p>Workers with <font color='#C71C7E'>bachelor's degrees</font> have a median income of $59,124.
+              <br> On average, those occupations have a <b>20% chance</b> of job automation.
+              <br><br> There are 18,399,270 workers with a <font color='#C71C7E'>bachelor's degree</font>.<p>")
 
-text6 <- paste0("Workers with a master's degree have a median income of $69,732",
-                " and, on average, a ", round(median(data$mean_prob[data$reveal==6])), "% chance of job automation.",
-                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==6])), " workers with a master's degree.")
+text6 <- HTML("<H2> Master's degrees </H2>
+              <br> <p>Workers with <font color='#5E4FA2'>master's degree</font> have a median income of $69,732.
+              <br> On average, those occupations have a <b>10% chance</b> of job automation.
+              <br><br> There are 1,281,710 workers with a <font color='#5E4FA2'>master's degree</font>.<p>")
 
-text7 <- paste0("Workers with a doctoral degree have a median income of $84,396",
-                " and, on average, a ", round(median(data$mean_prob[data$reveal==7])), "% chance of job automation.",
-                " There are ", scales::comma(sum(data$TOT_EMP[data$reveal==7])), " workers with a doctoral degree.")
+text7 <- HTML("<H2> Doctoral degrees </H2>
+              <br> <p>Workers with <b>doctoral degrees</b> have a median income of $84,396.
+              <br> On average, those occupations have a <b>3% chance</b> of job automation.
+              <br><br> There are 1,386,850 workers with a <b>doctoral degree</b>.<p>")
 
-text8 <- paste0("All things considered, the nominal median income of an average US worker is $31,786",
-                " and, on average, their job has a ", round(median(data$mean_prob)), "% chance of being automated.")
+text8 <- HTML("<H2> In Sum </H2>
+              <br> <p>All things considered, the nominal median income of an average US worker is <b>$31,786</b>.
+              <br> 47% of jobs are expected to face a high risk of automatization in the near future.<sup>1</sup><p>
+              <br><br><br>
+              <span style='font-size:11px'><sup>1</sup><a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Frey and Osborne (2013)</a>
+               write that 'associated occupations are potentially automatable over
+              some unspecified number of years, <i>perhaps a decade or two.'</i></span>")
 
-text <- function(wp){
+text <- function(num){
   p(
-  switch(wp,
+  switch(num,
          text1,
          text2,
          text3,
@@ -207,7 +219,27 @@ text <- function(wp){
 }
 
 cols <- c('No formal educational credential' = '#A00042','High school diploma or equivalent' = '#F56C42',
-          "Postsecondary nondegree award" = '#AADDA3', "Associate's degree" = '#3487BD', 
+          "Postsecondary nondegree award" = '#008640', "Associate's degree" = '#3487BD', 
           "Bachelor's degree" = '#C71C7E', "Master's degree" = '#5E4FA2',
           "Doctoral or professional degree" = '#1A1A1A') 
 
+legend_ord <- levels(with(data, reorder(typicaled, reveal)))
+
+introPlot <- data %>% 
+  filter(typicaled != "Some college, no degree") %>%
+  ggplot() +
+  geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
+                         alpha=1/5, col=typicaled))+
+  scale_size(range = c(1, 20), guide = 'none') +
+  xlab("\nMedian Income") +
+  ylab("Probability of Automation") +
+  ggtitle("Likelihood of Job Automation vs Median Income") +
+  labs(size=element_blank(), col=element_blank()) +
+  labs(alpha=NULL) +
+  guides(alpha=FALSE) +
+  scale_color_manual(values = cols, breaks = legend_ord) +
+  scale_x_continuous(labels=scales::dollar_format(prefix="$"), limits = c(25000,200000)) +
+  scale_y_continuous(labels=scales::number_format(suffix="%"), limits = c(0,100)) +
+  # theme(legend.position = "top", legend.direction = "horizontal", 
+  #       legend.text = element_text(colour="black", size = 12)) +
+  cr::drop_axis(axis = "y")

@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(scrollytell)
 library(shinyjs)
@@ -18,7 +9,7 @@ cr::set_cr_theme()
 
 source("source_code_for_shiny.R")
 
-# Define UI for application that draws a histogram
+# Define UI
 
 ui <- fluidPage(
   
@@ -31,50 +22,50 @@ ui <- fluidPage(
     includeCSS("www/style.css")
   ),
   
-  # Application title
   # Article title
   fluidRow(HTML("<center>
-                <h1>1992: Basketball's Dream Summer</h1>
-                <p style='size:18px';> by <a href='https://datascott.com/' target='_blank'>Scott Davis</a></p>
+                <h1>Automation and Its Impact on Jobs</h1>
+                <p style='size:18px';> by <a href='https://connorrothschild.github.io/' target='_blank'>Connor Rothschild</a></p>
                 </center>")
   ),
   br(),
   
+  # plot object for intro
   fluidRow(
     column(1),
     column(10,
            # Introduction
            fluidRow(id='text',
-                    column(2),
-                    column(8, 
+                    column(1),
+                    column(10, 
                            br(),
-                           HTML("<p><span style='font-size:30px'><b>Basketball fans</b></span>. If you could travel to a place and time where local teams (at every level) were at the center of the basketball discussion, where and when would it be?
-                           <br><br>
-                           For me, that question's easy. I lived it. Growing up in Michigan and reaching peak basketball fandom in the late 1980's and early 1990's, I witnessed championship caliber basketball on multiple levels. The Detroit Pistons' group of <a href='http://www.espn.com/30for30/film/_/page/badboys' target='_blank'>Bad Boys</a> were winning back-to-back titles in the NBA, and the University of Michigan's <a href='http://www.espn.com/watch/film/932e63d5-df33-4303-bc0f-590f6037b3a9/the-fab-five' target='_blank'>Fab Five</a> were all the rage in the NCAA.
-           <br><br>
-           While these teams were collecting wins and polarizing their respective leagues, another team, soon to be assembled, would unite basketball fans across the country. Prior to the 1992 Summer Olympics, rules dictated that men's basketball teams had to be comprised of amateurs and/or non-NBA professionals. As a result, the United States gathered the country's top collegiate talent to compete on the global stage, often against international teams made up of professionals. During the summer of 1992, however, everything changed. The ban on NBA players was lifted, and Team USA assembled it's first roster composed entirely of NBA players (well, one college player), aptly referred to as The Dream Team.</p>"),
-                           br()
+                           text0,
+                           br(),
+                           # ggvisOutput("interactivePlot"),
+                           plotOutput("introPlot", height = '600px')
                     ),
-                    column(2)
+                    column(1)
            ),
            
            br(), 
            br()
            )
     ),
+  
+  # scrollytelling plot
   scrolly_container("scr"
                     , scrolly_graph( br(), 
                                      br(),
                                      textOutput("section"),
                                      br(),
                                      HTML('<center>'),
-                                     plotOutput("plot"),
+                                     plotOutput("plot", height = '600px'),
                                      HTML('</center>')
                                      
                     )
                     , scrolly_sections(
-                      # HTML('<center>'),
-                      scrolly_section(id = 8),
+                      HTML('<center>'),
+                      scrolly_section(id = 0, render_text(0)),
                       scrolly_section(id = 1, render_text(1)),
                       scrolly_section(id = 2, render_text(2)),
                       scrolly_section(id = 3, render_text(3)),
@@ -82,11 +73,94 @@ ui <- fluidPage(
                       scrolly_section(id = 5, render_text(5)),
                       scrolly_section(id = 6, render_text(6)),
                       scrolly_section(id = 7, render_text(7)),
-                      scrolly_section(id = 8, render_text(8))
-                      # HTML('</center>')
+                      scrolly_section(id = 8, render_text(8)),
+                      # add a scrolly_section with nothing in it; 
+                      # this buffer prevents the plot from disappearing while reading last section
+                      scrolly_section(id = "buffer", br()),
+                      HTML('</center>')
                     )
                     
-  )
+  ),
+  
+  # Concluding text
+  div(fluidRow(id = 'text',
+               column(2),
+               column(8, 
+                      br(),
+                      HTML("<p><span style='font-size:30px'><b>The tournament</b></span>. As expected, once the men's Olympic basketball competition began, there was only one team that could leave Barcelona with the gold medal.  The United States cruised through all eight of its contests. In fact, during several games, it appeared as though the opposing team was just happy to be on the same floor as the NBA players.<br><br>
+                                
+                                Team USA averaged 117 points per game and held opponents to a measly 73 points per game over the two-week stretch.  Charles Barkley (18 PPG) and Michael Jordan (14.9 PPG) led the way in scoring.<br><br>
+                                Below is a look at player contributions in each of their eight victories.</p>"),
+                      br()
+               ),
+               column(2)
+  ), style = 'margin-top: -300px;'),
+  
+  br(),
+  br(),
+  br(),
+  
+  fluidRow(id = 'text',
+           column(2),
+           column(8, 
+                  br(),
+                  HTML("<p><span style='font-size:30px'><b>The impact</b></span>. The Dream Team's gold medal finish at the 1992 Olympics avenged a third place finish in 1988 and put the USA back on top of the basketball world - by a large margin. NBA popularity skyrocketed around the globe, thanks in part to the larger-than-life personalities of superstars like Michael Jordan, Magic Johnson, and Charles Barkley.<br><br>
+                                    
+                                    Team USA's decisive victory sent a message to the rest of the world that in order to compete for a championship on the global stage, huge improvements in skill and player development was essential. The world responded.  By 2004, international teams and players had elevated their games so much so that team USA settled for the bronze medal that year.<br><br>
+                                    
+                                    Since the 1992 games, numerous international players (such as Dirk Nowitzki, Manu Ginobili, Tony Parker, Pau and Marc Gasol) have come to the NBA, won championships, and found great success. While team USA is still a major favorite to stay on top, the Dream Team's influence on the international competition has ensured that this will be no easy task.<br><br>
+                                    
+                                    The game of basketball is better for it. </p>"),
+                  br()
+           ),
+           column(2)
+  ),
+  br(),
+  br(),
+  hr(),
+  br(),
+  
+  fluidRow(
+    column(2),
+    column(8,
+           HTML("<p>
+                <span style='font-size:18px'><i><u>Technical Notes</u></i></span><br>
+                <br>
+                <span style='font-size:12px'>
+                Employment and education data comes from the
+                <a href='https://www.bls.gov/emp/documentation/education-training-system.htm' target='_blank'>Bureau of Labor Statistics</a>. 
+                <br>
+                Employment and income data also comes from the <a href='https://www.bls.gov/oes/current/oes_nat.htm#11-0000' target='_blank'>BLS</a>.
+                <br>
+                Data on occupation and the risk of automation comes from <a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Frey and Osborne (2013)</a>. 
+                <br>
+                <br>
+                Education is coded as typical education, meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
+                If 51% of accountants hold a bachelor's degree, their typical education will be coded as such.
+                Summary statistics for each level of education are calculated via the weighted mean of each occupation given its number of workers.
+                <br>
+                <br>
+                This post may have technical errors. This post was an exercise to learn R and is not a comprehensive nor verifiably accurate account of automation's impact on jobs. 
+                Please refrain from citing this as anything other than an example of R usage in a scrollytelling context.
+                <br>
+                For more information on the technical details of this analysis, please see the <a href='https://connorrothschild.github.io/r/automation/' target='_blank'>accompanying blog post</a>. 
+                <br>
+                <br>
+                The R packages powering this site include 
+                <a href='https://www.tidyverse.org/' target='_blank'>tidyverse</a>,
+                <a href='http://shiny.rstudio.com/' target='_blank'>shiny</a>,
+                <a href='https://ggvis.rstudio.com' target='_blank'>ggvis</a>,
+                <a href='https://github.com/RinteRface/waypointer' target='_blank'>waypointer</a>, and 
+                <a href='https://github.com/JohnCoene/shticky' target='_blank'>shticky</a>.
+                </span>
+                </p>")
+    ),
+    column(2)
+  ),
+  br(),
+  br(),
+column(1)
+
 )
 
 # Define server logic
@@ -101,7 +175,7 @@ server <- function(input, output, session) {
     data %>% 
       filter(typicaled != "Some college, no degree") %>%
       filter(if (add != 8) add >= reveal else reveal %in% c(1:8)) %>%
-    ggplot() +
+      ggplot() +
       geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
                              alpha=ifelse(add == reveal, 1/5, 1/10), col=typicaled))+
       scale_size(range = c(1, 20), guide = 'none') +
@@ -114,14 +188,15 @@ server <- function(input, output, session) {
       scale_color_manual(values = cols, breaks = legend_ord) +
       scale_x_continuous(labels=scales::dollar_format(prefix="$"), limits = c(25000,200000)) +
       scale_y_continuous(labels=scales::number_format(suffix="%"), limits = c(0,100)) +
-      theme(legend.position = "top", legend.direction = "horizontal", 
-            legend.text = element_text(colour="black", size = 12)) +
-                                         #ifelse(add != 8, 20, 12))) +
+      theme(legend.position = "top", legend.direction = "horizontal") +
+            # legend.text = element_text(colour = ifelse(add == reveal, "black", "grey"))) +
+            # legend.text = element_text(colour="black", size = ifelse(add == reveal, 20, 12))) +
       cr::drop_axis(axis = "y")
     
   })
     
-  
+  # output$interactivePlot <- vis %>% bind_shiny("vis")
+  output$introPlot <- renderPlot({introPlot})
   output$scr <- renderScrollytell({scrollytell()})
   renderText(paste0("Section: ", input$scr))
   observe({cat("section:", input$scr, "\n")})
