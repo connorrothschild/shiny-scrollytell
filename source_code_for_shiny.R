@@ -258,8 +258,9 @@ introggPlot <- data %>%
   geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
                          alpha= 1/7, col=typicaled,
                          text = glue::glue('<b>Occupation</b>: {occupation}
-                                            <b>Probability of Automation</b>: {probability}%
-                                            <b>Median Income</b>: ${A_MEDIAN}'))) +
+                                                <b>Probability of Automation</b>: {probability}%
+                                                <b>Median Income</b>: ${A_MEDIAN}
+                                                <b>Number of Workers</b>: {TOT_EMP}'))) +
   scale_size(range = c(1, 20), guide = 'none') +
   xlab("\nMedian Income") +
   ylab("Probability of Automation") +
