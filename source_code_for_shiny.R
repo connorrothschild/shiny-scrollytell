@@ -122,7 +122,22 @@ render_text <- function(num){
   
 }
 
-text0 <- HTML("<span style='font-size:20px'> How do different jobs differ in their susceptibility to automation? </span>
+text <- function(num){
+  p(
+    switch(num,
+           text1,
+           text2,
+           text3,
+           text4,
+           text5,
+           text6,
+           text7,
+           text8
+    )
+  )
+}
+
+text0 <- HTML("<span style='font-size:20px'> How do jobs differ in their susceptibility to automation? </span>
               <br><br> 
               <p> The topic of job automation has rapidly entered the national discourse. 
               Although it was once a topic reserved for policy wonks, college students, and Reddit Libertarians, it's now a serious talking point&mdash;from 
@@ -132,7 +147,7 @@ text0 <- HTML("<span style='font-size:20px'> How do different jobs differ in the
               <br><br> But will different workers experience the impacts of automation in different ways? In this post, I combine data from two Oxford researchers, <a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Carl Benedikt Frey and Michael A. Osborne</a>,
               with employment statistics from the Bureau of Labor Statistics to answer the question: 
               <br><br>
-              <span style='font-size:18px'> How do different jobs differ in their susceptibility to automation? </span>
+              <span style='font-size:18px'> How do jobs differ in their susceptibility to automation? </span>
               <br> Specifically, how does a worker's <b>level of education</b> and <b>current income</b> influence their risk of job loss to the rise of the robots? <p>")
 
 text1 <- HTML("<H2> No education credentials </H2>
@@ -179,20 +194,50 @@ text8 <- HTML("<H2> In Sum </H2>
                write that 'associated occupations are potentially automatable over
               some unspecified number of years, <i>perhaps a decade or two.'</i></span>")
 
-text <- function(num){
-  p(
-  switch(num,
-         text1,
-         text2,
-         text3,
-         text4,
-         text5,
-         text6,
-         text7,
-         text8
-         )
-  )
-}
+concludingtext <- HTML("<p><span style='font-size:24px'><b>The Risk of Automation</b></span>
+                        <br>
+                            <span style='font-size:18px'>This data led researchers Carl Frey and Michael Osborne to predict that 47% of jobs are at serious risk of automation over the next couple decades.
+                        <br>
+                            <br>The visuals above suggest that the ills of automation may not be evenly distributed across jobs.
+                            Less educated workers are more likely to face job loss as a product of automation. Those with high school diplomas or less find themself concentrated near the top of the y-axis, while those with bachelor’s degrees or higher face a lower risk of automation.
+                        <br>
+                            <br>A job’s salary is also predictive of automation probability. As the median income of a profession increases, the likelihood of automation displacing its workers decreases.
+                            This could suggest that automation will increasingly bifurcate the already divided labor market, making those at the top wealthier at the expense of the worse-off.
+                        <br>
+                            <br>Automation’s impact on work necessitates a policy response. The fact that automation will have different effects on different industries and different workers is a reminder that this public policy will have to be strategic and thoughtful.</span></p>")
+
+technicalnotes <- HTML("<p>
+                <span style='font-size:18px'><i>Technical Notes</i></span><br>
+                <br>
+                <span style='font-size:12px'>
+                To learn more about how I made this app, please see the <a href='https://connorrothschild.github.io/r/automation-scrollytell/' target='_blank'>accompanying blog post</a>
+                <br>
+                Employment and education data comes from the
+                <a href='https://www.bls.gov/emp/documentation/education-training-system.htm' target='_blank'>Bureau of Labor Statistics</a>. 
+                <br>
+                Employment and income data also comes from the <a href='https://www.bls.gov/oes/current/oes_nat.htm#11-0000' target='_blank'>BLS</a>.
+                <br>
+                Data on occupation and the risk of automation comes from <a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Frey and Osborne (2013)</a>. 
+                <br>
+                <br>
+                Education is coded as typical education, meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
+                If 51% of accountants hold a bachelor's degree, their typical education will be coded as such.
+                Summary statistics for each level of education are calculated via the weighted mean of each occupation given its number of workers.
+                <br>
+                <br>
+                This post may have technical errors. This post was an exercise to learn R and is not a comprehensive nor verifiably accurate account of automation's impact on jobs. 
+                Please refrain from citing this as anything other than an example of R usage in a scrollytelling context.
+                <br>
+                For more information on the technical details of this analysis, please see the <a href='https://connorrothschild.github.io/r/automation/' target='_blank'>accompanying blog post</a>. 
+                <br>
+                <br>
+                The R packages powering this site include 
+                <a href='https://www.tidyverse.org/' target='_blank'>tidyverse</a>,
+                <a href='http://shiny.rstudio.com/' target='_blank'>shiny</a>,
+                <a href='https://github.com/ropensci/plotly' target='_blank'>plotly</a>, and 
+                <a href='https://github.com/statistiekcbs/scrollytell' target='_blank'>scrollytell</a>.
+                </span>
+                </p>")
 
 
 ### ALL PLOT OBJECTS
@@ -230,7 +275,7 @@ introggPlot <- data %>%
   theme(axis.line.x = ggplot2::element_line(colour = NULL, 
                                             size = NULL, linetype = NULL, lineend = NULL), 
         axis.line.y = ggplot2::element_blank(),
-        panel.grid.major.x = element_blank())
+        panel.grid.major.x = element_blank()) 
 
 # Convert into ggplotly
 introPlot <- ggplotly(introggPlot, tooltip = 'text') %>%
@@ -238,43 +283,6 @@ introPlot <- ggplotly(introggPlot, tooltip = 'text') %>%
     title = element_blank(),
     legend = list(x = 0.65, y = 0.925),
     font = list(family = 'Lato'),
-    margin=list(t=50),
-    hoverlabel = list(bgcolor = 'whitesmoke', color = 'DarkGray')) %>%
+    margin = list(t=50),
+    hoverlabel = list(bgcolor = 'whitesmoke', color = 'DarkGray')) %>% 
   config(displaylogo = F, showSendToCloud = F, displayModeBar = F)
-
-## Body plot
-
-
-
-# add_data <- function(add){
-#   
-#   vis <-  reactive({
-#     
-#     data <- data %>% 
-#       filter(typicaled != "Some college, no degree") %>%
-#       filter(if (add != 8) add == reveal else reveal %in% c(1:8)) %>% 
-#       ggvis(~A_MEDIAN, ~probability, opacity := 0.7, key := ~occupation) %>% 
-#       scale_numeric('size',domain = c(100000,500000),range=c(100,500)) %>%
-#       layer_points(fill = ~typicaled, size = ~TOT_EMP) %>% 
-#       add_tooltip(function(data) glue::glue('Occupation: {data$occupation}',
-#                                             'Number of Workers: {scales::comma(data$TOT_EMP)}',
-#                                             'Probability of Automation: {data$probability}%',
-#                                             'Income: {scales::dollar(data$A_MEDIAN)}',
-#                                             .sep = "<br />")) %>% 
-#       add_axis("x", title = "Median Income", grid = FALSE) %>%
-#       add_axis("y", title = "Probability of Automation", title_offset = 50, grid = FALSE) %>% 
-#       add_legend("fill", title = "Education", properties = legend_props(legend = list(y = 200))) %>%
-#       add_legend("size", title = "Number of Workers", properties = legend_props(legend = list(y = 50))) %>%
-#       scale_numeric("x", domain = c(25000, 200000), nice = FALSE) %>%
-#       scale_numeric("y", domain = c(0, 100), nice = FALSE) %>% 
-#       scale_nominal("fill", 
-#                     domain = c('No formal educational credential','High school diploma or equivalent', "Postsecondary nondegree award",
-#                                "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral or professional degree"), 
-#                     range = c('#A00042', '#F56C42', '#AADDA3', '#3487BD', '#5E4FA2', '#C71C7E', "#1A1A1A")) %>% 
-#       set_options(duration = 0, width = "auto", height = "auto", resizable = FALSE)
-#     
-#   })
-#   
-#   vis %>% bind_shiny("vis")
-#   
-# }  

@@ -1,30 +1,25 @@
-README
-================
+---
+title: "README"
+output: github_document
+editor_options:
+  chunk_output_type: console
+---
 
-NOTE: See the output
-[here](https://connorrothschild.shinyapps.io/automation/).
+NOTE: See the output [here](https://connorrothschild.shinyapps.io/automation/).
 
-I’ve always been interested in data visualization, and my most recent
-sub-passion has been *scrollytelling*. I’ve seen numerous examples of
-amazing scrolling articles, from sites such as [The
-Pudding](https://pudding.cool/), the [New York
-Times](https://www.nytimes.com/), and
-[FiveThirtyEight](https://fivethirtyeight.com/).
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE, eval = FALSE)
+```
 
-Although most of these sites rely on the same high-powered visualization
-tools (such as [D3.js](https://d3js.org/)) to create their stories, the
-learning curve for those are a bit too steep for a full-time college
-student to pursue (although [I am
-trying](https://github.com/connorrothschild/D3.js)\!).
+I've always been interested in data visualization, and my most recent sub-passion has been *scrollytelling*. I've seen numerous examples of amazing scrolling articles, from sites such as [The Pudding](https://pudding.cool/), the [New York Times](https://www.nytimes.com/), and [FiveThirtyEight](https://fivethirtyeight.com/).
 
-Thankfully, I came across some examples of scrollytelling in my language
-of choice, R.
+Although most of these sites rely on the same high-powered visualization tools (such as [D3.js](https://d3js.org/)) to create their stories, the learning curve for those are a bit too steep for a full-time college student to pursue (although [I am trying](https://github.com/connorrothschild/D3.js)!). 
 
-What follows is a scrollytelling recreation of the [very first
-visualization I ever
-made](https://connorrothschild.github.io/r/automation/).
+Thankfully, I came across some examples of scrollytelling in my language of choice, R.
 
-``` r
+What follows is a scrollytelling recreation of the [very first visualization I ever made](https://connorrothschild.github.io/r/automation/).
+
+```{r}
 library(shiny)
 library(scrollytell)
 library(shinyjs)
@@ -36,13 +31,9 @@ theme_set(theme_minimal())
 
 ## Construct an Updating Plot Object
 
-Once the data is already [loaded and
-cleaned](https://connorrothschild.github.io/r/automation/#load-datasets),
-we construct a plot object that will update as the user scrolls. ([Other
-R users](https://github.com/scottyd22/dream_team) make multiple plots;
-either way is fine.)
+Once the data is already [loaded and cleaned](https://connorrothschild.github.io/r/automation/#load-datasets), we construct a plot object that will update as the user scrolls. ([Other R users](https://github.com/scottyd22/dream_team) make multiple plots; either way is fine.)
 
-``` r
+```{r}
     plot <- data %>% 
       filter(if (add != 8) add >= reveal else reveal %in% c(1:8)) %>%
       ggplot() +
@@ -66,21 +57,17 @@ either way is fine.)
             panel.grid.major.x = element_blank())
 ```
 
-But wait, what’s that second line of code?
+But wait, what's that second line of code?
 
-``` r
+```{r}
 filter(if (add != 8) add >= reveal else reveal %in% c(1:8))
 ```
 
-This may make *0 sense* right now, but here’s why we have it.
+This may make *0 sense* right now, but here's why we have it.
 
-The important part (and somewhat difficult thing to understand) about
-this step is that your plot object has some **data which corresponds to
-an updating variable**. For me, I added a variable called *reveal* for
-each step of the visualization. For me, this meant having reveal
-correspond to a typical level of education for a given job.
+The important part (and somewhat difficult thing to understand) about this step is that your plot object has some **data which corresponds to an updating variable**. For me, I added a variable called *reveal* for each step of the visualization. For me, this meant having reveal correspond to a typical level of education for a given job. 
 
-``` r
+```{r}
 data <- data %>% 
   mutate(reveal = case_when(
     typicaled == "No formal educational credential" ~ 1,
@@ -94,30 +81,23 @@ data <- data %>%
   ))
 ```
 
-What this means is that every time the post observes an event (a
-scroll), it will update according to the number in the *reveal* column.
+What this means is that every time the post observes an event (a scroll), it will update according to the number in the *reveal* column.
 
-So, when my plot object has a line of code which says:
+So, when my plot object has a line of code which says: 
 
-``` r
+```{r}
 filter(if (add != 8) add >= reveal else reveal %in% c(1:8))
 ```
 
-That can be read as “Update the plot object to include all data points
-**up until the current point** encoded in reveal.”
+That can be read as "Update the plot object to include all data points **up until the current point** encoded in reveal." 
 
-But, it also depends on what level of *add* we are at; if *add* == 8
-(the last data point, e.g. the concluding plot), then we want to show
-*all data points*.
+But, it also depends on what level of *add* we are at; if *add* == 8 (the last data point, e.g. the concluding plot), then we want to show *all data points*.
 
-“Okay, okay. But what is *add*???”
+"Okay, okay. But what is *add*???"
 
-Good question. *add* is the variable I constructed to correspond to the
-user’s input (in this case, the scroll\!). When we put it all together,
-we’re going to wrap our plot object into a rendering function *inside*
-the server function. Confusing? It looks like this:
+Good question. *add* is the variable I constructed to correspond to the user's input (in this case, the scroll!). When we put it all together, we're going to wrap our plot object into a rendering function *inside* the server function. Confusing? It looks like this:
 
-``` r
+```{r}
 server <- function(input, output, session) {
   
   output$plot <- renderPlotly({
@@ -140,19 +120,13 @@ server <- function(input, output, session) {
 }
 ```
 
-What’s happening here? Within the server function, we’re doing two
-things:
+What's happening here? Within the server function, we're doing two things:
 
-First, we’re creating the plot object. Because we have the command `add
-<- input$scr` *inside* the function `renderPlotly`, our plot object will
-be dynamically updated along with `input$scr`.
+First, we're creating the plot object. Because we have the command `add <- input$scr` *inside* the function `renderPlotly`, our plot object will be dynamically updated along with `input$scr`.
 
-This makes more sense when you connect it to the ui. In our ui function,
-we include a `scrolly_container` from the scrollytell package. Within
-that, we make our `outputId` correspond to the name of our updating
-input (in this case, *scr*).
+This makes more sense when you connect it to the ui. In our ui function, we include a `scrolly_container` from the scrollytell package. Within that, we make our `outputId` correspond to the name of our updating input (in this case, *scr*).
 
-``` r
+```{r}
 ui <- fluidPage(
   
   # a bunch of introductory stuff, css stuff
@@ -191,17 +165,15 @@ ui <- fluidPage(
 
 So, the simplest way to think about this so far is:
 
-Construct a plot object with some updating variable (in my case,
-*reveal*).
+Construct a plot object with some updating variable (in my case, *reveal*). 
 
-``` r
+```{r}
 filter(if (add != 8) add >= reveal else reveal %in% c(1:8))
 ```
 
-Make that variable correspond with some input variable (in my case
-*add*, which is created from the *input$scr*).
+Make that variable correspond with some input variable (in my case *add*, which is created from the *input$scr*).
 
-``` r
+```{r}
 server <- function(input, output, session) {
   
   output$plot <- renderPlotly({
@@ -210,10 +182,9 @@ server <- function(input, output, session) {
     #... 
 ```
 
-Render your plot object in `scrolly_graph`, and provide input updates
-via each `scrolly_section`.
+Render your plot object in `scrolly_graph`, and provide input updates via each `scrolly_section`.
 
-``` r
+```{r}
 ui <- fluidPage(
   
   # a bunch of introductory stuff, css stuff
@@ -232,7 +203,7 @@ ui <- fluidPage(
 
 Render your plots in your server function.
 
-``` r
+```{r}
 server <- function(input, output, session) {
   
   output$plot <- 
@@ -246,20 +217,15 @@ server <- function(input, output, session) {
 }
 ```
 
-That’s (most of) it for the plot section. You can play around with other
-customizations too (for example, the alphas for my circles correspond to
-an `ifelse` around *reveal*, so old circles are faded out compared to
-new ones).
+That's (most of) it for the plot section. You can play around with other customizations too (for example, the alphas for my circles correspond to an `ifelse` around *reveal*, so old circles are faded out compared to new ones).
 
 ### Create a Series of Text Reveals
 
-Next, we create text sections using `HTML` and some helper functions
-which beautify them.
+Next, we create text sections using `HTML` and some helper functions which beautify them.
 
-First, we create the text boxes for each section following a similar
-naming convention:
+First, we create the text boxes for each section following a similar naming convention:
 
-``` r
+```{r}
 text1 <- HTML("<H2> No education credentials </H2>
               <br> <p> Workers with <font color='#A00042'>no formal education credential</font> have a median income of $25,636.
               <br> On average, those occupations have a <b>90% chance</b> of job automation.
@@ -273,10 +239,9 @@ text2 <- HTML("<H2> High school diplomas </H2>
 # ... 
 ```
 
-Then, we create a function `render_text` which beautifies that HTML with
-CSS:
+Then, we create a function `render_text` which beautifies that HTML with CSS:
 
-``` r
+```{r}
 text <- function(num){
   p(
     switch(num,
@@ -301,16 +266,13 @@ render_text <- function(num){
 }
 ```
 
-For all 8 of the above *text\_*s, we’ve created a switch function which
-calls them depnding on the number passed to `render_text`. Then, we
-apply paragraph format, put them in their own div, and apply the *text*
-class in our CSS sheet.
+For all 8 of the above *text_*s, we've created a switch function which calls them depnding on the number passed to `render_text`. Then, we apply paragraph format, put them in their own div, and apply the *text* class in our CSS sheet.
 
 How does this work?
 
 Recall that above, in our ui section, we had the following:
 
-``` r
+```{r}
 scrolly_sections(
                       HTML('<center>'),
                       scrolly_section(id = 0, render_text(0)),
@@ -320,30 +282,17 @@ scrolly_sections(
 )
 ```
 
-Here, our `scrolly_section`s take two inputs: our ID and our
-corresponding text. Rather than write out lengthy text boxes in each
-`scrolly_section`, we can construct them in a single file and then knit
-them all into the same format using `render_text`. This makes life a lot
-easier.
+Here, our `scrolly_section`s take two inputs: our ID and our corresponding text. Rather than write out lengthy text boxes in each `scrolly_section`, we can construct them in a single file and then knit them all into the same format using `render_text`. This makes life a lot easier.
 
-So, on each scroll (or observation), the app will update 1) the plot
-object, by adding *add* and updating according to *reveal*, and 2) the
-text, by running `render_text` which calls `text` which beautifies our
-HTML text.
+So, on each scroll (or observation), the app will update 1) the plot object, by adding *add* and updating according to *reveal*, and 2) the text, by running `render_text` which calls `text` which beautifies our HTML text.
 
 ### Final Touches
 
-Surprisingly, that’s about it. The rest of the app is built on
-`fluidPage`, and organizing via rows and columns in your shiny app. Your
-app should have a CSS style sheet (in the [www
-folder](https://shiny.rstudio.com/articles/css.html)). You may also
-include other plots (for my post, I have an introductory plot with a bit
-more context), which you will have to separately create and render in
-your server function.
+Surprisingly, that's about it. The rest of the app is built on `fluidPage`, and organizing via rows and columns in your shiny app. Your app should have a CSS style sheet (in the [www folder](https://shiny.rstudio.com/articles/css.html)). You may also include other plots (for my post, I have an introductory plot with a bit more context), which you will have to separately create and render in your server function.
 
 All in all, my code looks like this:
 
-``` r
+```{r}
 ui <- fluidPage(
   
   # suppress warning messages while data is loading on-screen 
@@ -455,7 +404,7 @@ column(1)
 
 And the server looks like this:
 
-``` r
+```{r}
 server <- function(input, output, session) {
   
   output$plot <- renderPlotly({
@@ -509,8 +458,6 @@ shinyApp(ui = ui, server = server)
 
 ## The Output
 
-You can see the final output of my post
-[here](https://connorrothschild.shinyapps.io/automation/).
+You can see the final output of my post [here](https://connorrothschild.shinyapps.io/automation/).
 
-You can look at the code and all of its context on GitHub
-[here](https://github.com/connorrothschild/shiny-scrollytell).
+You can look at the code and all of its context on GitHub [here](https://github.com/connorrothschild/shiny-scrollytell).

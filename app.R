@@ -2,8 +2,6 @@ library(shiny)
 library(scrollytell)
 library(shinyjs)
 library(ggvis)
-library(waypointer)
-library(shticky)
 library(plotly)
 
 # cr::set_cr_theme(font="lato")
@@ -36,11 +34,23 @@ ui <- fluidPage(
     column(10,
            # intro text
            fluidRow(id='text',
-                    column(2),
-                    column(8, 
+                    column(1),
+                    column(10, 
                            br(),
-                           text0),
-                    column(2)),
+                           text0,
+                           hr(),
+                           h1(
+                             class = "instructions",
+                             "How to read this chart:", 
+                             br(),
+                             br(),
+                             "The size of each", icon("circle"), "corresponds to the number of workers in that job.",
+                             br(),
+                             "Hover over each", icon("circle"), "to see details on the occupation's income and probability of automation.",
+                             br(),
+                             "Double click on a", icon("circle"), "in the legend to focus on a specific level of education." 
+                           )),
+                    column(1)),
            # plot object for intro
            plotlyOutput("introPlot", height = '400px')
            ),
@@ -79,21 +89,11 @@ ui <- fluidPage(
                     
   ),
   
-  # Concluding text
+  # concluding text
   div(fluidRow(id = 'text',
                column(2),
                column(8, 
-                      HTML("<p><span style='font-size:24px'><b>The Risk of Automation</b></span>
-                        <br>
-                            <span style='font-size:18px'>Using the dataset I’ve used in this project, researchers Carl Frey and Michael Osborne predicted that 47% of jobs are at risk of automation over the next couple decades.
-                        <br>
-                            <br>The visuals above suggest that the ills of automation may not be evenly distributed across jobs.
-                            Less educated workers are more likely to face job loss as a product of automation. Those with high school diplomas or less find themself concentrated near the top of the y-axis, while those with bachelor’s degrees or higher face a lower risk of automation.
-                        <br>
-                            <br>A job’s salary is also predictive of automation probability. As the median income of a profession increases, the likelihood of automation displacing its workers decreases.
-                            This could suggest that automation will increasingly bifurcate the already divided labor market, making those at the top wealthier at the expense of the worse-off.
-                        <br>
-                            <br>Automation’s impact on work necessitates a policy response. The fact that automation will have different effects on different industries and different workers is a reminder that this public policy will have to be strategic and thoughtful.</span></p>"),
+                      concludingtext,
                       br()
                ),
                column(2)
@@ -107,37 +107,7 @@ ui <- fluidPage(
   fluidRow(
     column(1),
     column(10,
-           HTML("<p>
-                <span style='font-size:18px'><i>Technical Notes</i></span><br>
-                <br>
-                <span style='font-size:12px'>
-                Employment and education data comes from the
-                <a href='https://www.bls.gov/emp/documentation/education-training-system.htm' target='_blank'>Bureau of Labor Statistics</a>. 
-                <br>
-                Employment and income data also comes from the <a href='https://www.bls.gov/oes/current/oes_nat.htm#11-0000' target='_blank'>BLS</a>.
-                <br>
-                Data on occupation and the risk of automation comes from <a href='https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf' target='_blank'>Frey and Osborne (2013)</a>. 
-                <br>
-                <br>
-                Education is coded as typical education, meaning that the coded variable corresponds to the level of education that is most prevalent within a given occupation.
-                If 51% of accountants hold a bachelor's degree, their typical education will be coded as such.
-                Summary statistics for each level of education are calculated via the weighted mean of each occupation given its number of workers.
-                <br>
-                <br>
-                This post may have technical errors. This post was an exercise to learn R and is not a comprehensive nor verifiably accurate account of automation's impact on jobs. 
-                Please refrain from citing this as anything other than an example of R usage in a scrollytelling context.
-                <br>
-                For more information on the technical details of this analysis, please see the <a href='https://connorrothschild.github.io/r/automation/' target='_blank'>accompanying blog post</a>. 
-                <br>
-                <br>
-                The R packages powering this site include 
-                <a href='https://www.tidyverse.org/' target='_blank'>tidyverse</a>,
-                <a href='http://shiny.rstudio.com/' target='_blank'>shiny</a>,
-                <a href='https://ggvis.rstudio.com' target='_blank'>ggvis</a>,
-                <a href='https://github.com/RinteRface/waypointer' target='_blank'>waypointer</a>, and 
-                <a href='https://github.com/JohnCoene/shticky' target='_blank'>shticky</a>.
-                </span>
-                </p>")
+           technicalnotes
     ),
     column(1)
   ),
@@ -147,7 +117,7 @@ column(1)
 
 )
 
-# Define server logic
+# server
 server <- function(input, output, session) {
   
   output$plot <- renderPlotly({
