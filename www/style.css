@@ -16,7 +16,7 @@ background: linear-gradient(180deg, rgba(142,162,190,1) 0%, rgba(66,74,88,1) 100
 } */
 
 .container-fluid{
-  padding: 0;
+  background: 0;
 }
 
 .big{

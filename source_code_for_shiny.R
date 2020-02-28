@@ -225,9 +225,6 @@ technicalnotes <- HTML("<p>
                 Summary statistics for each level of education are calculated via the weighted mean of each occupation given its number of workers.
                 <br>
                 <br>
-                This post may have technical errors. This post was an exercise to learn R and is not a comprehensive nor verifiably accurate account of automation's impact on jobs. 
-                Please refrain from citing this as anything other than an example of R usage in a scrollytelling context.
-                <br>
                 For more information on the technical details of this analysis, please see the <a href='https://connorrothschild.github.io/r/automation/' target='_blank'>accompanying blog post</a>. 
                 <br>
                 <br>
@@ -257,10 +254,10 @@ introggPlot <- data %>%
   ggplot() +
   geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
                          alpha= 1/7, col=typicaled,
-                         text = glue::glue('<b>Occupation</b>: {occupation}
-                                                <b>Probability of Automation</b>: {probability}%
-                                                <b>Median Income</b>: ${A_MEDIAN}
-                                                <b>Number of Workers</b>: {TOT_EMP}'))) +
+                         text = glue::glue('<span style = "font-size:1.5em">{occupation}</span><br>
+                                                <i>Probability of Automation</i>: {probability}%
+                                                <i>Median Income</i>: ${formattable::comma(A_MEDIAN, digits = 0)}
+                                                <i>Number of Workers</i>: {formattable::comma(TOT_EMP, digits = 0)}'))) +
   scale_size(range = c(1, 20), guide = 'none') +
   xlab("\nMedian Income") +
   ylab("Probability of Automation") +

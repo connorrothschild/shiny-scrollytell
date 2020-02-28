@@ -11,6 +11,20 @@ source("source_code_for_shiny.R")
 
 ui <- fluidPage(
   
+  meta() %>%
+    meta_social(
+      title = "Automation and Its Impact on Jobs",
+      description = "And an exercise in Shiny Scrollytelling",
+      url = "https://connorrothschild.shinyapps.io/automation/",
+      image = "images/thumbnail.png",
+      image_alt = "Automation and its impact on jobs",
+      twitter_creator = "@CL_Rothschild",
+      twitter_card_type = "summary",
+      twitter_site = "@CL_Rothschild"
+    ),
+  
+  title = "Automation and Its Impact on Jobs",
+  
   # suppress warning messages while data is loading on-screen 
   tags$style(type="text/css",
              ".shiny-output-error { visibility: hidden; }",
@@ -130,10 +144,10 @@ server <- function(input, output, session) {
       ggplot() +
       geom_point(mapping=aes(x=A_MEDIAN, y=probability, size=TOT_EMP,
                              alpha=ifelse(add == reveal, 1/5, 1/10), col=typicaled,
-                             text = glue::glue('<b>Occupation</b>: {occupation}
-                                                <b>Probability of Automation</b>: {probability}%
-                                                <b>Median Income</b>: ${A_MEDIAN}
-                                                <b>Number of Workers</b>: {TOT_EMP}'))) +
+                             text = glue::glue('<span style = "font-size:1.5em">{occupation}</span><br>
+                                                <i>Probability of Automation</i>: {probability}%
+                                                <i>Median Income</i>: ${formattable::comma(A_MEDIAN, digits = 0)}
+                                                <i>Number of Workers</i>: {formattable::comma(TOT_EMP, digits = 0)}'))) +
       scale_size(range = c(1, 20)) +
       xlab("\nMedian Income") +
       ylab("Probability of Automation") +
@@ -153,7 +167,7 @@ server <- function(input, output, session) {
       legend = list(x = 0.65, y = 0.925),
       font = list(family = 'Lato'),
       margin=list(t=50),
-      hoverlabel = list(bgcolor = 'whitesmoke', color = 'DarkGray')) %>%
+      hoverlabel = list(bgcolor = 'whitesmoke', color = 'darkGray')) %>%
     config(displaylogo = F, showSendToCloud = F, displayModeBar = F)
     
   })
