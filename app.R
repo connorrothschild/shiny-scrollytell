@@ -3,6 +3,7 @@ library(scrollytell)
 library(shinyjs)
 library(ggvis)
 library(plotly)
+library(metathis)
 
 # cr::set_cr_theme(font="lato")
 theme_set(theme_minimal())
