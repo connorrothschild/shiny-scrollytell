@@ -9,7 +9,6 @@ ui <- fluidPage(
       description = "And an exercise in Shiny Scrollytelling",
       url = "https://connorrothschild.shinyapps.io/automation/",
       image = "https://raw.githubusercontent.com/connorrothschild/shiny-scrollytell/master/images/thumbnail.png",
-      image_alt = "Automation and its impact on jobs",
       twitter_creator = "@CL_Rothschild",
       twitter_card_type = "summary_large_image",
       twitter_site = "@CL_Rothschild"
