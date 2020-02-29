@@ -10,11 +10,6 @@ hr {
   solid #000000
 }
 
-/* #bg {
-background: rgb(142,162,190);
-background: linear-gradient(180deg, rgba(142,162,190,1) 0%, rgba(66,74,88,1) 100%);
-} */
-
 .container-fluid{
   background: 0;
 }

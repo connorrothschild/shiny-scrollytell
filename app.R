@@ -1,26 +1,17 @@
-library(shiny)
-library(scrollytell)
-library(shinyjs)
-library(ggvis)
-library(plotly)
-library(metathis)
-
-# cr::set_cr_theme(font="lato")
-theme_set(theme_minimal())
-
 source("source_code_for_shiny.R")
 
 ui <- fluidPage(
   
+  # meta tags
   meta() %>%
     meta_social(
       title = "Automation and Its Impact on Jobs",
       description = "And an exercise in Shiny Scrollytelling",
       url = "https://connorrothschild.shinyapps.io/automation/",
-      image = "images/thumbnail.png",
+      image = "https://raw.githubusercontent.com/connorrothschild/shiny-scrollytell/master/images/thumbnail.png",
       image_alt = "Automation and its impact on jobs",
       twitter_creator = "@CL_Rothschild",
-      twitter_card_type = "summary",
+      twitter_card_type = "summary_large_image",
       twitter_site = "@CL_Rothschild"
     ),
   
@@ -147,8 +138,8 @@ server <- function(input, output, session) {
                              alpha=ifelse(add == reveal, 1/5, 1/10), col=typicaled,
                              text = glue::glue('<span style = "font-size:1.5em">{occupation}</span><br>
                                                 <i>Probability of Automation</i>: {probability}%
-                                                <i>Median Income</i>: ${formattable::comma(A_MEDIAN, digits = 0)}
-                                                <i>Number of Workers</i>: {formattable::comma(TOT_EMP, digits = 0)}'))) +
+                                                <i>Median Income</i>: ${comma(A_MEDIAN, digits = 0)}
+                                                <i>Number of Workers</i>: {comma(TOT_EMP, digits = 0)}'))) +
       scale_size(range = c(1, 20)) +
       xlab("\nMedian Income") +
       ylab("Probability of Automation") +
