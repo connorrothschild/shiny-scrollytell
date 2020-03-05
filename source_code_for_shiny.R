@@ -14,9 +14,6 @@ library(metathis)
 library(formattable)
 # devtools::install_github("statistiekcbs/scrollytell")
 library(scrollytell)
-library(robotstxt)
-
-paths_allowed("https://twitter.com/")
 
 options(scipen=999)
 theme_set(theme_minimal())
