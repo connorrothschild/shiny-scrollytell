@@ -1,6 +1,12 @@
-education <- read_excel("data/education.xlsx", skip=1)
-salary <- read_excel("data/national_M2017_dl.xlsx")
-automation <- read_excel("data/raw_state_automation_data.xlsx")
+library(here)
+library(readxl)
+library(tidyverse)
+library(ggplot2)
+
+education <- read_excel(here::here("data/education.xlsx"), skip=1)
+salary <- read_excel(here::here("data/national_M2017_dl.xlsx"))
+automation <- read_excel(here::here("data/raw_state_automation_data.xlsx"))
+typicaleducation <- read_excel(here::here("data/typicaleducation.xlsx"))
 
 salary1 <- salary %>% 
   group_by(OCC_TITLE) %>% 
@@ -38,7 +44,6 @@ salary2$occupation <- tolower(salary2$occupation)
 education2$occupation <- tolower(education2$occupation)
 edsal <- merge(as.data.frame(education2), as.data.frame(salary2), by="occupation") %>% drop_na()
 
-typicaleducation <- read_excel("typicaleducation.xlsx")
 typicaleducation2 <- typicaleducation %>% select(occupation,typicaled,workexp)
 typicaleducation2 <- typicaleducation2 %>% drop_na()
 typicaleducation2$occupation <- tolower(typicaleducation2$occupation)
@@ -90,4 +95,4 @@ mean_prob <- data %>%
 # %>%  summarise(mean_income = weighted.mean(A_MEDIAN, weight))
 
 data <- merge(data, mean_prob)
-#write.csv(data, "data/final_data.csv")
+write_csv(data, here::here("data/final_data.csv"))

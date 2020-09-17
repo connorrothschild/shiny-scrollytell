@@ -14,10 +14,11 @@ library(metathis)
 library(formattable)
 # devtools::install_github("statistiekcbs/scrollytell")
 library(scrollytell)
+library(here)
 
 options(scipen=999)
 theme_set(theme_minimal())
-data <- read.csv("data/final_data.csv")
+data <- readr::read_csv(here("data/final_data.csv"))
 
 ### FUNCTIONS & TEXT
 

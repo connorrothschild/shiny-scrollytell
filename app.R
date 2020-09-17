@@ -1,4 +1,5 @@
-source("source_code_for_shiny.R")
+library(here)
+source(here("scripts/source_code_for_shiny.R"))
 
 ui <- fluidPage(
   
