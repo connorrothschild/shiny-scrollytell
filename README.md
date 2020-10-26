@@ -1,7 +1,7 @@
 README
 ================
 
-Scrollytelling in R—because its a lot easier in D3. See the output [here](https://connorrothschild.shinyapps.io/automation/).
+Scrollytelling in R—because its a lot easier than D3. See the output [here](https://connorrothschild.shinyapps.io/automation/).
 
 [![thumbnail gif](images/thumbnail.gif)](https://connorrothschild.shinyapps.io/automation/)
 
